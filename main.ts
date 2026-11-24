@@ -12,8 +12,12 @@ const ENTRY =
 
 const MAX_CHARS = 160;
 
-if (ENTRY.length === 0 || ENTRY.length > MAX_CHARS) {
-  console.error(`entry is ${ENTRY.length} characters, expected 1..${MAX_CHARS}`);
+// Count Unicode code points, not UTF-16 code units, so characters outside
+// the Basic Multilingual Plane (e.g. emoji) count as one character each.
+const entryLength = [...ENTRY].length;
+
+if (entryLength === 0 || entryLength > MAX_CHARS) {
+  console.error(`entry is ${entryLength} characters, expected 1..${MAX_CHARS}`);
   process.exit(1);
 }
 if (ENTRY.trim().length === 0) {
@@ -29,4 +33,4 @@ const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 mkdirSync(outDir, { recursive: true });
 const outPath = join(outDir, 'entry.txt');
 writeFileSync(outPath, ENTRY, 'utf8');
-console.log(`wrote entry.txt (${ENTRY.length} characters) to ${outPath}`);
+console.log(`wrote entry.txt (${entryLength} characters) to ${outPath}`);
